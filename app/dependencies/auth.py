@@ -1,5 +1,9 @@
 from typing import List, Union
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials, OAuth2PasswordBearer
+from fastapi.security import (
+    HTTPBearer,
+    HTTPAuthorizationCredentials,
+    OAuth2PasswordBearer,
+)
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.core.security import decode_access_token
@@ -8,40 +12,48 @@ from app.models.user import User
 from app.schemas.token import TokenData
 from app.utils.enums import UserRole
 
-oauth2_scheme = HTTPBearer(scheme_name='Authorization')
+oauth2_scheme = HTTPBearer(scheme_name="Authorization")
 
 
 def get_current_user(
-    http_authorization_credentials: HTTPAuthorizationCredentials = Depends(oauth2_scheme),
-    db: Session = Depends(get_db)
+    http_authorization_credentials: HTTPAuthorizationCredentials = Depends(
+        oauth2_scheme
+    ),
+    db: Session = Depends(get_db),
 ) -> User:
     """
     Decode JWT token and return the current user from DB
     """
     try:
-        token_data: TokenData = decode_access_token(http_authorization_credentials.credentials)
+        token_data: TokenData = decode_access_token(
+            http_authorization_credentials.credentials
+        )
     except HTTPException as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials"
+            detail="Could not validate credentials",
         )
-    
+
     user = User.find(db, token_data.user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
     return user
 
+
 def login_required(current_user: User = Depends(get_current_user)):
     return current_user
+
 
 def permission_required(*roles):
     def wrapper(user: User = Depends(get_current_user)):
         if roles and user.role not in roles:
             raise HTTPException(status_code=403, detail="Permission Denied")
         return user
+
     return Depends(wrapper)
-    
+
+
 class PermissionRequired:
     def __init__(
         self,

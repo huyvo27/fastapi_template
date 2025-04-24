@@ -11,25 +11,29 @@ from app.exceptions import UserNotFound, UsernameEmailAlreadyExists
 class UserService:
     def __init__(self, db: orm.Session) -> None:
         self.db = db
-    
+
     def authenticate(self, username: str, password: str) -> Optional[User]:
-        user = self.db.query(User).filter(
-            or_(User.email == username, User.username == username)
-        ).first()
+        user = (
+            self.db.query(User)
+            .filter(or_(User.email == username, User.username == username))
+            .first()
+        )
         if user and verify_password(password, user.hashed_password):
             return user
         return None
 
     def create_user(self, data: UserCreateRequest):
-        exist_user = self.db.query(User).filter(
-            or_(User.email == data.email, User.username == data.username)
-        ).first()
+        exist_user = (
+            self.db.query(User)
+            .filter(or_(User.email == data.email, User.username == data.username))
+            .first()
+        )
         if exist_user:
             raise UsernameEmailAlreadyExists()
 
         new_user = User.create(
             db=self.db,
-            username = data.username,
+            username=data.username,
             phone_number=data.phone_number,
             full_name=data.full_name,
             email=data.email,
@@ -47,7 +51,7 @@ class UserService:
             full_name=data.full_name,
             phone_number=data.phone_number,
             email=data.email,
-            hashed_password=hash_password(data.password) if data.password else None
+            hashed_password=hash_password(data.password) if data.password else None,
         )
 
     def update(self, user_id: int, data: UserUpdateRequest):
@@ -60,7 +64,7 @@ class UserService:
             email=data.email,
             hashed_password=hash_password(data.password) if data.password else None,
             is_active=data.is_active,
-            role = user.role if data.role is None else data.role.value
+            role=user.role if data.role is None else data.role.value,
         )
 
     def get(self, user_id):
@@ -68,7 +72,7 @@ class UserService:
         if exist_user is None:
             raise UserNotFound()
         return exist_user
-    
+
     def delete(self, user_id):
         user = self.get(user_id)
         if user:

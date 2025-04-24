@@ -14,9 +14,11 @@ for section in config.sections():
     http_code = int(config[section]["http_code"])
     code = config[section]["code"]
     message = config[section]["message"]
+
     def exception_factory(http_code=http_code, code=code, message=message):
         def _init(self, **context):
             super(type(self), self).__init__(http_code, code, message, **context)
+
         return type(class_name, (CustomAPIException,), {"__init__": _init})
 
     dynamic_exceptions[class_name] = exception_factory()

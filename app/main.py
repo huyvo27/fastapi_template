@@ -16,8 +16,10 @@ Base.metadata.create_all(bind=engine)
 
 def get_app() -> FastAPI:
     app = FastAPI(
-        title=settings.APP_NAME, docs_url="/docs", redoc_url='/re-docs',
-        openapi_url=f"{settings.API_PREFIX}/openapi.json"
+        title=settings.APP_NAME,
+        docs_url="/docs",
+        redoc_url="/re-docs",
+        openapi_url=f"{settings.API_PREFIX}/openapi.json",
     )
     app.add_middleware(
         CORSMiddleware,
@@ -35,9 +37,11 @@ def get_app() -> FastAPI:
 
 app = get_app()
 
+
 @app.on_event("startup")
 async def startup():
-    setup_admin_user() 
+    setup_admin_user()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

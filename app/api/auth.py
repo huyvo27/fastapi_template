@@ -12,22 +12,24 @@ from app.exceptions import InvalidLogin, InactiveUser
 
 router = APIRouter()
 
+
 class LoginRequest(BaseModel):
     username: str
     password: str
 
-@router.post('/login', response_model=Response[Token])
+
+@router.post("/login", response_model=Response[Token])
 def login(form_data: LoginRequest, db: Session = Depends(get_db)):
-    user = UserService(db).authenticate(username=form_data.username, password=form_data.password)
+    user = UserService(db).authenticate(
+        username=form_data.username, password=form_data.password
+    )
 
     if not user:
         raise InvalidLogin()
     elif not user.is_active:
         raise InactiveUser()
-    
+
     user.update(db=db, last_login=datetime.now(timezone.utc))
     toke_data = {"user_id": user.id}
 
-    return Response.success({
-        'access_token': create_access_token(data=toke_data)
-    })
+    return Response.success({"access_token": create_access_token(data=toke_data)})

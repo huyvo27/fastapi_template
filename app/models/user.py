@@ -11,5 +11,5 @@ class User(BareBaseModel):
     phone_number = Column(String, unique=True, index=True)
     hashed_password = Column(String(255))
     is_active = Column(Boolean, default=True)
-    role = Column(String, default='guest')
+    role = Column(String, default="guest")
     last_login = Column(DateTime)

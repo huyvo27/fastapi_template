@@ -14,6 +14,7 @@ class UserBase(BaseModel):
     class Config:
         from_attributes = True
 
+
 class UserCreateRequest(UserBase):
     full_name: Optional[str]
     username: str
@@ -23,11 +24,13 @@ class UserCreateRequest(UserBase):
     is_active: bool = True
     role: UserRole = UserRole.GUEST
 
+
 class UserUpdateMeRequest(BaseModel):
     full_name: Optional[str] = None
     phone_number: Optional[str] = None
     password: Optional[str] = None
     email: Optional[EmailStr] = None
+
 
 class UserUpdateRequest(BaseModel):
     full_name: Optional[str] = None
@@ -36,6 +39,7 @@ class UserUpdateRequest(BaseModel):
     password: Optional[str] = None
     is_active: Optional[bool] = True
     role: Optional[UserRole] = None
+
 
 class UserItemResponse(UserBase):
     id: int

@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 p = inflect.engine()
 T = TypeVar("T", bound="BareBaseModel")
 
+
 @as_declarative()
 class Base:
     __abstract__ = True
@@ -25,7 +26,11 @@ class BareBaseModel(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+    updated_at = Column(
+        DateTime,
+        default=datetime.now(timezone.utc),
+        onupdate=datetime.now(timezone.utc),
+    )
 
     @classmethod
     def create(cls: Type[T], db: Session, **kwargs) -> T:
@@ -47,16 +52,17 @@ class BareBaseModel(Base):
     def filter_by(cls: Type[T], db: Session, **kwargs):
         return db.query(cls).filter_by(**kwargs)
 
-
     def update(self, db: Session, **kwargs) -> T:
         print(kwargs.items())
-        print('asdsadasdsad')
+        print("asdsadasdsad")
         for key, value in kwargs.items():
             if value is not None:
                 if hasattr(self, key):
                     setattr(self, key, value)
                 else:
-                    raise AttributeError(f"{key} is not a valid attribute of {self.__class__.__name__}")
+                    raise AttributeError(
+                        f"{key} is not a valid attribute of {self.__class__.__name__}"
+                    )
         db.commit()
         db.refresh(self)
         return self
