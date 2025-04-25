@@ -8,7 +8,7 @@ from app.dependencies import (
     get_current_user,
     get_db,
 )
-from app.utils.pagination import PaginationParams, paginate, PaginatedData
+from app.utils.pagination import PaginationParams, paginate
 from app.schemas.response import Response, PaginatedResponse
 from app.schemas.user import (
     UserItemResponse,

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 from app.utils.enums import UserRole
 
@@ -17,9 +17,9 @@ class UserBase(BaseModel):
 
 class UserCreateRequest(UserBase):
     full_name: Optional[str]
-    username: str
+    username: str = Field(..., min_length=3, max_length=20)
     phone_number: str
-    password: str
+    password: str = Field(..., min_length=8)
     email: EmailStr
     is_active: bool = True
     role: UserRole = UserRole.GUEST
