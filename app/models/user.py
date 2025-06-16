@@ -1,5 +1,5 @@
 from requests import Session
-from sqlalchemy import Column, String, Boolean, DateTime, or_
+from sqlalchemy import Column, String, Boolean, DateTime
 
 from app.db.base import BareBaseModel
 
